@@ -32,10 +32,9 @@ var connection = mysql.createConnection({
 // Update SQL database
 // Show the customer the total cost of their purchase.
 
-function select(){
+function select() {
     console.log("Let's Buy!");
-    inquirer.prompt([
-        {
+    inquirer.prompt([{
             type: "input",
             name: "item_id",
             message: "Enter the ID of item to purchase:",
@@ -48,21 +47,33 @@ function select(){
             // filter: Number
         }
     ]).then(function (input) {
-        console.log("You have selected item " + input.item_id)
-        console.log(input.qty + " of them");
+        // console.log("You have selected item " + input.item_id)
+        // console.log(input.qty + " of them");
         var buyItem = input.item_id;
         var buyQty = input.qty;
         var SQL = 'SELECT * FROM products WHERE ?';
 
-    	connection.query(SQL, {item_id: buyItem}, function(err, res) {
-            console.log(res);
+        connection.query(SQL, {
+            item_id: buyItem
+        }, function (err, res) {
+            // console.log(res);
             var productData = {}
             productData = res[0];
-            console.log(productData.product_name);
-            console.log(productData.stock_quantity);
+            console.log("       Purchasing: " + productData.product_name);
+            console.log("Quanity Requested: " + buyQty);
+            console.log("Quanity Remaining: " + productData.stock_quantity);
+            if (buyQty <= productData.stock_quantity) {
+                var totalPrice = buyQty * productData.price;
+                var newQty = productData.stock_quantity - buyQty;
+                console.log("Total Amount: $" + totalPrice);
+                console.log("Total Remaning: " + newQty);
 
+            } else {
+                console.log('Insufficient quantity!');
+            }
+            // console.log("      Each Priced: "+productData.price);
             // console.log("We have " +productData.stock_quanity+" number of " +productData.product_name+ " left")
-            // if(buyQty<= productData.stock_quanity)
+            // 
         });
     });
 }

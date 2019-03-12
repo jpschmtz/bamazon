@@ -32,6 +32,17 @@ var connection = mysql.createConnection({
 // Update SQL database
 // Show the customer the total cost of their purchase.
 
+function updateInventory(buyItem, newQty) {
+    console.log(buyItem);
+    console.log(newQty);
+    connection.query('UPDATE products SET stock_quantity = ? WHERE item_id = ?', [newQty, buyItem],
+        function (err, res) {
+            if (err) throw err;
+            // console.log(res);
+        });
+    dispalyItems();
+}
+
 function select() {
     console.log("Let's Buy!");
     inquirer.prompt([{
@@ -67,9 +78,10 @@ function select() {
                 var newQty = productData.stock_quantity - buyQty;
                 console.log("Total Amount: $" + totalPrice);
                 console.log("Total Remaning: " + newQty);
-
+                updateInventory(buyItem, newQty);
             } else {
                 console.log('Insufficient quantity!');
+                dispalyItems();
             }
             // console.log("      Each Priced: "+productData.price);
             // console.log("We have " +productData.stock_quanity+" number of " +productData.product_name+ " left")
